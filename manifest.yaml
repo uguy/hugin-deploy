@@ -1,0 +1,110 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+spec: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: hugin-sa
+  namespace: dev
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: hugin-role
+  namespace: dev
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: hugin-role-binding
+  namespace: dev
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: hugin-role
+subjects:
+- kind: ServiceAccount
+  name: hugin-sa
+  namespace: dev
+---
+apiVersion: v1
+data:
+  KUBERNETES_NAMESPACE: dev
+  MY_VAR: Hello from dev env config !
+  SPRING_CLOUD_KUBERNETES_CLIENT_NAMESPACE: dev
+kind: ConfigMap
+metadata:
+  name: hugin-cm
+  namespace: dev
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: hugin
+  name: hugin
+  namespace: dev
+spec:
+  ports:
+  - name: 8080-8080
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: hugin
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hugin
+  name: hugin
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hugin
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: hugin
+    spec:
+      containers:
+      - env:
+        - name: SPRING_CLOUD_KUBERNETES_CLIENT_NAMESPACE
+          valueFrom:
+            configMapKeyRef:
+              key: SPRING_CLOUD_KUBERNETES_CLIENT_NAMESPACE
+              name: hugin-cm
+        - name: MY_VAR
+          valueFrom:
+            configMapKeyRef:
+              key: MY_VAR
+              name: hugin-cm
+        image: dummy.io/hugin/dev-hugin:0.0.1-SNAPSHOT-6d7a011
+        name: hugin
+        resources:
+          limits:
+            cpu: 1
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 2Gi
+      serviceAccountName: hugin-sa
