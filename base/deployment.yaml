@@ -18,7 +18,7 @@ spec:
     spec:
       serviceAccountName: hugin-sa
       containers:
-      - image: dummy.io/hugin/hugin:0.0.1-SNAPSHOT
+      - image: dummy.io/hugin/hugin
         name: hugin
         resources: 
             limits:
