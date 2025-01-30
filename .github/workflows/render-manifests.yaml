@@ -17,11 +17,11 @@ jobs:
       contents: 
         write
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         # fetch-depth: 0 needed to get all branches
         fetch-depth: 0
-    - uses: fregante/setup-git-user@v1
+    - uses: fregante/setup-git-user@v2
     - 
       name: Render manifests
       run: |
@@ -47,7 +47,7 @@ jobs:
         fi
     -
       name: Deploy PR to ${{ matrix.env }}
-      uses: peter-evans/create-pull-request@v4
+      uses: peter-evans/create-pull-request@v7
       if: ${{ matrix.env == 'prod' }}
       with:
         title: ${{ github.event.head_commit.message }}
