@@ -2,7 +2,7 @@ name: Render Manifests
 on:
   push:
     paths-ignore:
-    - '**/README.md'
+    - '**/README.adoc'
     branches:
     - main
 

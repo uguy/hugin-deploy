@@ -5,4 +5,4 @@ metadata:
 data:
   KUBERNETES_NAMESPACE: dev
   SPRING_CLOUD_KUBERNETES_CLIENT_NAMESPACE: dev
-  MY_VAR: "Hello from dev env config" 
+  MY_VAR: "Hello from dev env config !" 
