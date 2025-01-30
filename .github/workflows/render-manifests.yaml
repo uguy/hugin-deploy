@@ -12,6 +12,9 @@ jobs:
     strategy:
       matrix:
         env: [dev, prod]
+    permissions:
+      contents: 
+        write
     steps:
     - uses: actions/checkout@v3
       with:
@@ -21,25 +24,25 @@ jobs:
     - 
       name: Render manifests
       run: |
-        kustomize build env/${{ matrix.env }} --output /tmp/all.yaml
-        if ! git checkout env/${{ matrix.env }} -- ; then
-          git checkout --orphan env/${{ matrix.env }}
+        kustomize build env/${{ matrix.env }} --output /tmp/manifest.yaml
+        if ! git checkout deploy/${{ matrix.env }} -- ; then
+          git checkout --orphan deploy/${{ matrix.env }}
           git rm -rf .
-          cp /tmp/all.yaml .
-          git add all.yaml
+          cp /tmp/manifest.yaml .
+          git add manifest.yaml
           git commit -m "${{ github.event.head_commit.message }}"
-          git push --set-upstream origin env/${{ matrix.env }}
+          git push --set-upstream origin deploy/${{ matrix.env }}
         else
-          cp /tmp/all.yaml .
+          cp /tmp/manifest.yaml .
         fi 
     -
       name: Deploy to ${{ matrix.env }}
       if: ${{ matrix.env != 'prod' }}
       run: |
         if ! git diff --quiet HEAD ; then 
-          git add all.yaml
+          git add manifest.yaml
           git commit -m "${{ github.event.head_commit.message }}"
-          git push --set-upstream origin env/${{ matrix.env }}
+          git push --set-upstream origin deploy/${{ matrix.env }}
         fi
     -
       name: Deploy PR to ${{ matrix.env }}
@@ -48,5 +51,5 @@ jobs:
       with:
         title: ${{ github.event.head_commit.message }}
         commit-message: ${{ github.event.head_commit.message }}
-        base: env/${{ matrix.env }}
-        branch: deploy-pr/env/${{ matrix.env }}
+        base: deploy/${{ matrix.env }}
+        branch: pr/deploy/env/${{ matrix.env }}
