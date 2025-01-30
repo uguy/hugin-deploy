@@ -98,7 +98,7 @@ spec:
             configMapKeyRef:
               key: MY_VAR
               name: hugin-cm
-        image: dummy.io/hugin/dev-hugin:0.0.1-SNAPSHOT-6d7a011
+        image: dummy.io/hugin/dev-hugin:0.0.1-SNAPSHOT-d7b368b
         name: hugin
         resources:
           limits:
