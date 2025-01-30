@@ -2,39 +2,80 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: hugin
-  name: hugin
+    app.kubernetes.io/part-of: hugin	
+    app.kubernetes.io/name: hugin-app
+  name: hugin-app
   namespace: hugin
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
-  replicas: 1
   selector:
     matchLabels:
-      app: hugin
-  strategy: {}
+      app.kubernetes.io/name: hugin-app
   template:
     metadata:
       labels:
-        app: hugin
+        app.kubernetes.io/name: hugin-app
     spec:
+      replicas: 1
       serviceAccountName: hugin-sa
       containers:
       - image: dummy.io/hugin/hugin
         name: hugin
         resources: 
             limits:
-              cpu: 1
+              cpu: '1'
               memory: 2Gi
             requests:
               cpu: 500m
               memory: 2Gi
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+        livenessProbe:
+          failureThreshold: 6
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8080
+        readinessProbe:
+          failureThreshold: 6
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080
         env:
-        - name: SPRING_CLOUD_KUBERNETES_CLIENT_NAMESPACE
-          valueFrom:
-            configMapKeyRef:
-              name: hugin-cm
-              key: SPRING_CLOUD_KUBERNETES_CLIENT_NAMESPACE
-        - name: MY_VAR
-          valueFrom:
-            configMapKeyRef:
-              name: hugin-cm
-              key: MY_VAR
+          - name: SPRING_CLOUD_KUBERNETES_CLIENT_NAMESPACE
+            valueFrom:
+              configMapKeyRef:
+                name: hugin-cm
+                key: spring.cloud.kubernetes.client.namespace
+          - name: MY_VAR
+            valueFrom:
+              configMapKeyRef:
+                name: hugin-cm
+                key: my-var
+        volumeMounts:
+        - mountPath: /tmp
+          name: hugin-tmp-dir
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+      volumes:
+        - name: hugin-tmp-dir
+          emptyDir:
+            sizeLimit: 500Mi
+            medium: Memory

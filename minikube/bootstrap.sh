@@ -48,7 +48,7 @@ else
   log_msg "INFO" "Minikube n'est pas en cours d'exécution. Démarrage d'un nouveau cluster..."
   minikube start \
     --cpus=max --memory=max \
-    --addons=ingress,ingress-dns \
+    --addons=ingress,ingress-dns,metrics-server \
     --install-addons=true \
     --driver=docker || true
 
@@ -70,12 +70,12 @@ else
     log_msg "INFO" "CoreDNS non configuré, modification de la configuration..."
     newconfig=$(
     cat <<EOF
-    ${currentconfig}
-    test:53 {
+${currentconfig}
+test:53 {
     errors
     cache 30
     forward . $(minikube ip)
-    }
+}
 EOF
     )
     patch=$(jq -Rrsc '{"data":{"Corefile":.}}' <<< "${newconfig}")
@@ -91,6 +91,3 @@ kubectl create ns argocd || true
 kubectl apply -k argocd/ -n argocd
 kubectl apply -f argocd/argocd-project.yaml -n argocd
 kubectl apply -f argocd/argocd-ingress.yaml -n argocd
-
-ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
-echo "ArgoCD password: ${ARGOCD_PASSWORD}"

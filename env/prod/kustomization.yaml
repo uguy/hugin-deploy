@@ -6,6 +6,14 @@ resources:
 - ../../base
 - config-map.yaml
 
+patches:
+ - target:
+      group: networking.k8s.io
+      version: v1
+      kind: Ingress
+      name: hugin
+   path: ingress-patch.yaml
+
 images:
 - name: dummy.io/hugin/hugin
   newTag: 1.0.0

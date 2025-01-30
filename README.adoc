@@ -1,5 +1,7 @@
 = Readme
 
 `kustomize build overlays/development`
-
 `kustomize build overlays/development | kubectl apply -f -`
+
+`kubectl -n dev port-forward svc/hugin 8080:8080`
+`kubectl -n argocd port-forward svc/argocd-server 9000:80`
