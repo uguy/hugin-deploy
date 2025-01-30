@@ -14,8 +14,8 @@ jobs:
       matrix:
         env: [dev, prod]
     permissions:
-      contents: 
-        write
+      contents: write
+      pull-requests: write
     steps:
     - uses: actions/checkout@v4
       with:
