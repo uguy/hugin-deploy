@@ -5,3 +5,7 @@ namespace: prod
 resources:
 - ../../base
 - config-map.yaml
+
+images:
+- name: dummy.io/hugin/hugin
+  newTag: 0.0.1
