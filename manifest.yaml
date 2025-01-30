@@ -183,7 +183,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: hugin.test
+  - host: hugin-dev.test
     http:
       paths:
       - backend:
