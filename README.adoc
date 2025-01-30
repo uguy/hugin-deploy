@@ -1,0 +1,5 @@
+= Readme
+
+`kustomize build overlays/development`
+
+`kustomize build overlays/development | kubectl apply -f -`
