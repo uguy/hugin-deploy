@@ -3,6 +3,7 @@ on:
   push:
     paths-ignore:
     - '**/README.adoc'
+    - minikube
     branches:
     - main
 

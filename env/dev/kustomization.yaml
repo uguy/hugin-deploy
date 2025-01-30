@@ -9,4 +9,4 @@ resources:
 images:
 - name: dummy.io/hugin/hugin
   newName: dummy.io/hugin/dev-hugin
-  newTag: 0.0.1-SNAPSHOT-6d7a011
+  newTag: 0.0.1-SNAPSHOT-d7b368b
