@@ -8,4 +8,4 @@ resources:
 
 images:
 - name: dummy.io/hugin/hugin
-  newTag: 0.0.1
+  newTag: 0.0.1-SNAPSHOT
