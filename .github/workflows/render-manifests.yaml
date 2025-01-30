@@ -50,7 +50,13 @@ jobs:
       uses: peter-evans/create-pull-request@v7
       if: ${{ matrix.env == 'prod' }}
       with:
-        title: ${{ github.event.head_commit.message }}
+        title: 'deploy(${{ matrix.env }}): new update submitted by ${{ github.actor }}'
         commit-message: ${{ github.event.head_commit.message }}
         base: deploy/${{ matrix.env }}
         branch: pr/deploy/env/${{ matrix.env }}
+        body: |
+          Pull request to update **${{ matrix.env }}** environment triggered by the following commit:
+
+          `${{ github.event.head_commit.message }}`
+
+          :warning: Please review diff **carefully** ! Once this PR is merged, the resulting manifest will be deployed automatically. 
