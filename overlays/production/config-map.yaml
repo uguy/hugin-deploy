@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hugin-cm
+data:
+  SPRING_CLOUD_KUBERNETES_CLIENT_NAMESPACE: prod
+  MY_VAR: "Hello from prod env config"

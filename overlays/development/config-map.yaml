@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hugin-cm
+data:
+  KUBERNETES_NAMESPACE: dev
+  SPRING_CLOUD_KUBERNETES_CLIENT_NAMESPACE: dev
+  MY_VAR: "Hello from dev env config" 

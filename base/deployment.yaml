@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hugin
+  name: hugin
+  namespace: hugin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hugin
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: hugin
+    spec:
+      serviceAccountName: hugin-sa
+      containers:
+      - image: dummy.io/hugin/hugin:0.0.1-SNAPSHOT
+        name: hugin
+        resources: 
+            limits:
+              cpu: 1
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 2Gi
+        env:
+        - name: SPRING_CLOUD_KUBERNETES_CLIENT_NAMESPACE
+          valueFrom:
+            configMapKeyRef:
+              name: hugin-cm
+              key: SPRING_CLOUD_KUBERNETES_CLIENT_NAMESPACE
+        - name: MY_VAR
+          valueFrom:
+            configMapKeyRef:
+              name: hugin-cm
+              key: MY_VAR
