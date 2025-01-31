@@ -5,6 +5,9 @@ on:
     branches:
      - main
 
+env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -14,4 +17,4 @@ jobs:
     runs-on: ubuntu-latest
     if: contains( github.event.pull_request.labels.*.name, 'preview')
     steps:
-      - run: echo 'Preview requested for branch ${{ github.ref }}'
+      - run: echo 'Preview requested for branch ${{ env.BRANCH_NAME }}'
