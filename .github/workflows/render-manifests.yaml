@@ -7,6 +7,10 @@ on:
     branches:
     - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   main:
     runs-on: ubuntu-latest
@@ -22,8 +26,7 @@ jobs:
         # fetch-depth: 0 needed to get all branches
         fetch-depth: 0
     - uses: fregante/setup-git-user@v2
-    - 
-      name: Render manifests
+    - name: Render manifests
       run: |
         kustomize build env/${{ matrix.env }} --output /tmp/manifest.yaml
         if ! git checkout deploy/${{ matrix.env }} -- ; then
@@ -36,8 +39,7 @@ jobs:
         else
           cp /tmp/manifest.yaml .
         fi 
-    -
-      name: Deploy to ${{ matrix.env }}
+    - name: Deploy to ${{ matrix.env }}
       if: ${{ matrix.env != 'prod' }}
       run: |
         if ! git diff --quiet HEAD ; then 
@@ -45,8 +47,7 @@ jobs:
           git commit -m "${{ github.event.head_commit.message }}"
           git push --set-upstream origin deploy/${{ matrix.env }}
         fi
-    -
-      name: Deploy PR to ${{ matrix.env }}
+    - name: Deploy PR to ${{ matrix.env }}
       uses: peter-evans/create-pull-request@v7
       if: ${{ matrix.env == 'prod' }}
       with:

@@ -1,0 +1,17 @@
+on:
+  pull_request:
+    types:
+        [labeled]
+    branches:
+     - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy_preview:
+    runs-on: ubuntu-latest
+    if: contains( github.event.pull_request.labels.*.name, 'preview')
+    steps:
+      - run: echo 'Preview requested for branch ${{ github.ref }}'

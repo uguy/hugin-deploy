@@ -1,11 +1,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: argocd
+  name: argocd-ingress
   namespace: argocd
   labels:
-    app.kubernetes.io/name: argocd
-    app.kubernetes.io/instance: argocd
+    app.kubernetes.io/name: argocd-ingress
   annotations:
     argocd.argoproj.io/sync-wave: "2"
 spec:

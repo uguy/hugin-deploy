@@ -14,6 +14,13 @@ patches:
       name: hugin-ingress
    path: ingress-patch.yaml
 
+ - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: hugin-app
+   path: deployment-patch.yaml
+
 images:
 - name: dummy.io/hugin/hugin
   newTag: 1.0.0

@@ -3,5 +3,11 @@
 `kustomize build overlays/development`
 `kustomize build overlays/development | kubectl apply -f -`
 
-`kubectl -n dev port-forward svc/hugin 8080:8080`
+`kubectl -n dev port-forward svc/hugin-svc 8080:8080`
 `kubectl -n argocd port-forward svc/argocd-server 9000:80`
+
+`http://localhost:8080/actuator/info`
+
+`http://localhost:8080/actuator/health/`
+`http://localhost:8080/actuator/health/readiness`
+`http://localhost:8080/actuator/health/liveness`

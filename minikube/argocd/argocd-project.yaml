@@ -24,6 +24,7 @@ spec:
 status: {}
 
 ---
+# DEV APPLICATION
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -56,8 +57,8 @@ spec:
     - RespectIgnoreDifferences=true # When syncing changes, respect fields ignored by the ignoreDifferences configuration
     - ApplyOutOfSyncOnly=true # Only sync out-of-sync resources, rather than applying every object in the application
 
-
 ---
+# PROD APPLICATION
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -90,3 +91,49 @@ spec:
     - PruneLast=true # Allow the ability for resource pruning to happen as a final, implicit wave of a sync operation
     - RespectIgnoreDifferences=true # When syncing changes, respect fields ignored by the ignoreDifferences configuration
     - ApplyOutOfSyncOnly=true # Only sync out-of-sync resources, rather than applying every object in the application
+
+---
+# PR APPLICATIONS
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  name: hugin-pull-requests
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+  - pullRequest:
+      requeueAfterSeconds: 30
+      github:
+        owner: uguy
+        repo: hugin-deploy
+        labels:
+          - preview
+      filters:
+        - branchMatch: "pr/deploy/.*"
+  template:
+    metadata:
+      name: 'hugin-pr-{{.number}}'
+    spec:
+      source:
+        repoURL: https://github.com/uguy/hugin-deploy.git
+        targetRevision: '{{.head_sha}}'
+        path: .
+      project: hugin
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: hugin-pr-{{.number}}
+      syncPolicy:
+        automated: # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.
+          prune: true # Specifies if resources should be pruned during auto-syncing ( false by default ).
+          selfHeal: true # Specifies if partial app sync should be executed when resources are changed only in target Kubernetes cluster and no git change detected ( false by default ).
+          allowEmpty: true # Allows deleting all application resources during automatic syncing ( false by default ).
+        syncOptions: # Sync options which modifies sync behavior
+          - Validate=false # disables resource validation (equivalent to 'kubectl apply --validate=false') ( true by default ).
+          - CreateNamespace=true # Namespace Auto-Creation ensures that namespace specified as the application destination exists in the destination cluster.
+          - PrunePropagationPolicy=foreground # Supported policies are background, foreground and orphan.
+          - PruneLast=true # Allow the ability for resource pruning to happen as a final, implicit wave of a sync operation
+          - RespectIgnoreDifferences=true # When syncing changes, respect fields ignored by the ignoreDifferences configuration
+          - ApplyOutOfSyncOnly=true # Only sync out-of-sync resources, rather than applying every object in the application
