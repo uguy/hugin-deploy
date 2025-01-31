@@ -24,4 +24,4 @@ patches:
 images:
 - name: dummy.io/hugin/hugin
   newName: dummy.io/hugin/dev-hugin
-  newTag: 0.0.1-SNAPSHOT-d7b368b
+  newTag: 0.0.2-SNAPSHOT-0936056
