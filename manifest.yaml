@@ -120,7 +120,7 @@ spec:
             configMapKeyRef:
               key: my-var
               name: hugin-cm
-        image: dummy.io/hugin/dev-hugin:0.0.1-SNAPSHOT-d7b368b
+        image: dummy.io/hugin/dev-hugin:0.0.2-SNAPSHOT-0936056
         livenessProbe:
           failureThreshold: 6
           httpGet:
