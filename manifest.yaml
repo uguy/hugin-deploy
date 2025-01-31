@@ -99,6 +99,7 @@ metadata:
   name: hugin-app
   namespace: dev
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: hugin-app
@@ -162,7 +163,6 @@ spec:
         volumeMounts:
         - mountPath: /tmp
           name: hugin-tmp-dir
-      replicas: 1
       serviceAccountName: hugin-sa
       volumes:
       - emptyDir:
