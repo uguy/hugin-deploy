@@ -99,7 +99,7 @@ metadata:
   name: hugin-app
   namespace: prod
 spec:
-  replicas: 3
+  replicas: 5
   selector:
     matchLabels:
       app.kubernetes.io/name: hugin-app
